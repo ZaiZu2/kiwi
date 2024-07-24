@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass, fields
 
 # FILE STORING ONLY DOMAIN SCHEMAS USED AS INTERNAL DATA STRUCTURES
+# Not really required in this project, but in case any business logic is to be added
+# which transforms queried DB data, it would be important to separate persistance and
+# domain models
 
 
 @dataclass

@@ -1,18 +1,14 @@
 from contextlib import asynccontextmanager
-from datetime import datetime
 from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
-from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import LOGGING_CONFIG, get_config
-from src.api import main, rooms
+from src.api import main
 from src.database import create_root_objects, recreate_database
-from src.dependencies import get_connection_manager
-from src.utils import expire_inactive_rooms, schedule_recurring_task, tags_metadata
-from src.cache import request_validation_handler
+from src.utils import tags_metadata
 
 
 @asynccontextmanager
