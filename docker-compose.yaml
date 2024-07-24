@@ -1,0 +1,40 @@
+services:
+  nginx:
+    image: word_chain_game_nginx
+    hostname: nginx
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - deployment/.env.nginx
+    restart: on-failure
+    depends_on:
+      - backend
+
+  backend:
+    image: word_chain_game_backend
+    hostname: backend
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    # ports: # API is available only inside the network, do not expose it's port
+    env_file:
+      - deployment/.env.backend
+    restart: on-failure
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    # ports: # DB is available only inside the network, do not expose it's port
+    env_file:
+      - deployment/.env.postgres
+    restart: on-failure
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+
+volumes:
+  postgres-db:
