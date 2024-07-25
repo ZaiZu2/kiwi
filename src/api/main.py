@@ -1,9 +1,10 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy import select, insert
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
+from sqlalchemy.ext.asyncio import AsyncSession
+
 import src.schemas.database as db
 import src.schemas.validation as v
 from src.database import get_db_session
@@ -26,12 +27,20 @@ async def update_countries(
             .returning(db.CountryCode.id_)
         )
         country_code_id = await db_session.scalar(upsert_code_query)
+        # If the country code already exists, UPSERT will return None
+        if country_code_id is None:
+            country_code_id = await db_session.scalar(
+                select(db.CountryCode.id_).where(db.CountryCode.code == country_obj.iso)
+            )
 
         country_names = [
             {'name': country_name, 'country_code_id': country_code_id}
             for country_name in country_obj.names
         ]
-        sqlite_upsert(db.CountryName).values(country_names).on_conflict_do_nothing()
+        upsert_name_query = (
+            sqlite_upsert(db.CountryName).values(country_names).on_conflict_do_nothing()
+        )
+        await db_session.execute(upsert_name_query)
 
 
 @router.post('/match_country', status_code=status.HTTP_200_OK)
