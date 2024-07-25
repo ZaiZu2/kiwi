@@ -57,5 +57,5 @@ class CountryCode(Base):
     code: so.Mapped[str] = so.mapped_column(sa.String(3), unique=True)
 
     country_names: so.Mapped[list[CountryName]] = so.relationship(
-        back_populates='country_name'
+        back_populates='country_code'
     )
