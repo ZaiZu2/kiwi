@@ -1,9 +1,9 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 import src.schemas.database as db
 import src.schemas.validation as v
 from src.database import get_db_session
@@ -19,16 +19,19 @@ async def update_countries(
 ) -> None:
     """Update internal country/name map, used to match country names to ISO codes."""
     for country_obj in countries_list:
-        country_code = db.CountryCode(code=country_obj.iso)
-        country_names = []
-        for country_name in country_obj.names:
-            country_name = db.CountryName(name=country_name, country_code=country_code)
-            country_names.append(country_name)
+        upsert_code_query = (
+            sqlite_upsert(db.CountryCode)
+            .values({'code': country_obj.iso})
+            .on_conflict_do_nothing()
+            .returning(db.CountryCode.id_)
+        )
+        country_code_id = await db_session.scalar(upsert_code_query)
 
-        # Ideally should be executed as a bult insert. Current implementation will emit
-        # separate INSERT statements for each iteration
-        db_session.add_all([country_code, *country_names])
-        await db_session.flush()
+        country_names = [
+            {'name': country_name, 'country_code_id': country_code_id}
+            for country_name in country_obj.names
+        ]
+        sqlite_upsert(db.CountryName).values(country_names).on_conflict_do_nothing()
 
 
 @router.post('/match_country', status_code=status.HTTP_200_OK)
