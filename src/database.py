@@ -2,7 +2,15 @@ from __future__ import annotations
 
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+# Upsert constructs are not dialect agnostic
+# Dialect-specific imports below act as an entrypoint from which other modules can import the upsert construct
+from sqlalchemy.dialects.sqlite import insert as dialect_upsert  # noqa: F401
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 import src.schemas.database as db
 from config import get_config
@@ -28,7 +36,7 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
-async def recreate_database():
+async def recreate_database(engine: AsyncEngine) -> None:
     async with engine.begin() as conn:  # `engine.begin()` due to a synchronous DB commands
         await conn.run_sync(db.Base.metadata.drop_all)
         await conn.run_sync(db.Base.metadata.create_all)
