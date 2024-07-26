@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import AsyncGenerator
 
 import pytest
-import pytest_asyncio
 from fastapi import FastAPI
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app import create_app
@@ -20,7 +21,7 @@ test_async_session = async_sessionmaker(
 
 def get_test_config() -> Config:
     return Config(
-        SQLALCHEMY_DATABASE_URI='sqlite+aiosqlite:///internal.db',
+        SQLALCHEMY_DATABASE_URI='sqlite+aiosqlite:///tests/internal.db',
     )
 
 
@@ -31,7 +32,6 @@ async def get_test_db_session() -> AsyncGenerator[AsyncSession, None]:
     FastAPI internally wraps this function into an async context manager, so it cannot
     be used as a context manager itself.
     """
-    await recreate_database()
     async with test_async_session() as session:
         try:
             await session.begin()
@@ -42,25 +42,49 @@ async def get_test_db_session() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
-@pytest_asyncio.fixture(autouse=True)
-async def db() -> None:
-    await recreate_database(test_engine)
+@pytest.fixture()
+async def db_session() -> AsyncGenerator[AsyncSession, None]:
+    """Open a DB session for a test case."""
+    async with test_async_session() as session:
+        try:
+            await session.begin()
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
 
 
 @pytest.fixture()
-def test_app() -> FastAPI:
+async def test_app() -> FastAPI:
     test_app = create_app()
-
     test_app.dependency_overrides[get_config] = get_test_config
     test_app.dependency_overrides[get_db_session] = get_test_db_session
+
+    await recreate_database(test_engine)
     return test_app
 
 
 @pytest.fixture()
-def client(test_app: FastAPI) -> TestClient:
-    return TestClient(test_app)
+async def client(test_app: FastAPI) -> AsyncGenerator[AsyncClient]:
+    async with AsyncClient(
+        app=test_app, base_url='http://localhost:8000/api'
+    ) as test_client:
+        yield test_client
 
 
-# @pytest.fixture()
-# def db_entity_factory() -> DbEntityFactory:
-#     return DbEntityFactory()
+@pytest.fixture(scope='session')
+def countries_input():
+    """
+    Input file contains 5 different ISO codes with 5 country names assigned to each.
+    `CAN` code has 5 names, but 3 are duplicates.
+    """
+    with open(Path('tests/test_input.json')) as file:
+        return json.load(file)
+
+
+@pytest.fixture()
+async def _populate_db(countries_input: str, client: AsyncClient) -> None:
+    """Helper fixture to populate the DB with test data."""
+    with open(Path('tests/test_input.json')) as file:
+        await client.post('/countries', json=json.load(file))

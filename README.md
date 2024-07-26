@@ -2,6 +2,11 @@
 
 # Requirements:
 
+# Frontend:
+
+As the application is built as a RestAPI, FE interface was omitted. For manual testing purposes,
+OpenAPI docs can be used under: `localhost:8000/docs` route.
+
 # API
 
 Application uses fully async FastAPI - as a bonus, it provides automatic API documentation. Provides

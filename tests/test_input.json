@@ -1,0 +1,28 @@
+[
+  {
+    "iso": "USA",
+    "names": [
+      "United States",
+      "Stany Zjednoczone",
+      "Spojené státy",
+      "Vereinigte Staaten",
+      "Estados Unidos"
+    ]
+  },
+  {
+    "iso": "CAN",
+    "names": ["Canada", "Kanada", "Kanada", "Kanada", "Canadá"]
+  },
+  {
+    "iso": "MEX",
+    "names": ["Mexiko", "México", "Mexique", "Messico", "Мексика"]
+  },
+  {
+    "iso": "BRA",
+    "names": ["Brazil", "Brazylia", "Brazílie", "Brasilien", "Brasil"]
+  },
+  {
+    "iso": "ARG",
+    "names": ["Аргентина", "Argentyna", "Argentina", "Argentinien", "Argentine"]
+  }
+]
