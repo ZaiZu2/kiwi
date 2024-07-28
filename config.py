@@ -3,13 +3,13 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Config(BaseSettings):
-    class Config:
-        env_file = Path(__file__).parent.resolve() / '.env'
-        env_file_encoding = 'utf-8'
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).parent.resolve() / '.env', env_file_encoding='utf-8'
+    )
 
     DATABASE_URI: str
     ENVIRONMENT: Literal['development', 'production'] = 'production'

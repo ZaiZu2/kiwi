@@ -1,7 +1,11 @@
-cfgv==3.4.0
-identify==2.5.35
-mypy==1.8.0
+exceptiongroup==1.2.2
+iniconfig==2.0.0
+mypy==1.11.0
 mypy-extensions==1.0.0
-nodeenv==1.8.0
-pre-commit==3.7.0
-ruff==0.1.13
+packaging==24.1
+pluggy==1.5.0
+pytest==8.3.2
+pytest-asyncio==0.23.8
+ruff==0.5.5
+tomli==2.0.1
+typing_extensions==4.12.2

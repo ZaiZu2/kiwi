@@ -51,7 +51,6 @@ async def test_upsert_countries(
     )
     assert canada_names_added == 3
 
-
 @pytest.mark.usefixtures('_populate_db')
 async def test_match_country(client: AsyncClient) -> None:
     """Test `match_country` endpoint - successful country name matching."""

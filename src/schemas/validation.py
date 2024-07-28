@@ -10,12 +10,12 @@ class GeneralBaseModel(BaseModel):
 
 
 # MODEL SCHEMAS
-class CountryCode(BaseModel):
+class CountryCode(GeneralBaseModel):
     id_: int
     code: str
 
 
-class CountryName(BaseModel):
+class CountryName(GeneralBaseModel):
     id_: int
     name: str
     country_code_id: int
