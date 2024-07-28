@@ -13,6 +13,8 @@ from app import create_app
 from config import Config, get_config
 from src.database import get_db_session, recreate_database
 
+pytest_plugins = ("pytest_asyncio",)
+
 test_engine = create_async_engine(get_config().DATABASE_URI)
 test_async_session = async_sessionmaker(
     bind=test_engine, autocommit=False, autoflush=True
