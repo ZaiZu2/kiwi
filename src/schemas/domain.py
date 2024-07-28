@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, fields
 
-# FILE STORING ONLY DOMAIN SCHEMAS USED AS INTERNAL DATA STRUCTURES
-# Not really required in this project, but in case any business logic is to be added
-# which transforms queried DB data, it would be important to separate persistance and
-# domain models
+# FILE STORING ONLY DOMAIN SCHEMAS USED AS INTERNAL DATA STRUCTURES Not really required
+# in this project, but in case any business logic is to be added which
+# transforms/extends queried DB data, it would be important to separate persistance and
+# domain models - we do not want to store transient state in DB models during their
+# lifespan - they should only represent the state of the DB.
 
 
 @dataclass
