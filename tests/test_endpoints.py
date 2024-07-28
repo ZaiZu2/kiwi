@@ -11,8 +11,8 @@ async def test_upsert_countries(
 ) -> None:
     """Test `upsert_countries` endpoint."""
     response = await client.post('/countries', json=countries_input)
-    data = response.json()
     assert response.status_code == 201
+    data = response.json()
     assert len(data['codes']) == 5
     assert len(data['names']) == 23
 
