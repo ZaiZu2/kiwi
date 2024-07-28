@@ -15,10 +15,8 @@ from src.utils import tags_metadata
 async def lifespan(app: FastAPI):
     if get_config().ENVIRONMENT == 'development':
         await create_db_tables(engine, recreate=True)
-        print("Tables dropped and created")
     else:
         await create_db_tables(engine, recreate=False)
-        print("Tables created")
     yield
 
 
