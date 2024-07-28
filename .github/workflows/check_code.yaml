@@ -21,7 +21,7 @@ jobs:
         run: pip install -r ./requirements_dev.txt
 
       - name: Lint code
-        run: ruff check
+        run: ruff check .
 
   test_code:
     runs-on: ubuntu-latest
@@ -42,4 +42,4 @@ jobs:
           pip install -r ./requirements_prod.txt
       
       - name: Run unit tests
-        run: pytest -o asyncio_mode=auto -p
+        run: pytest
