@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from app import create_app
 from config import Config, get_config
-from src.database import get_db_session, recreate_database
+from src.database import get_db_session, create_db_tables
 
 pytest_plugins = ("pytest_asyncio",)
 
@@ -63,7 +63,7 @@ async def test_app() -> FastAPI:
     test_app.dependency_overrides[get_config] = get_test_config
     test_app.dependency_overrides[get_db_session] = get_test_db_session
 
-    await recreate_database(test_engine)
+    await create_db_tables(test_engine)
     return test_app
 
 

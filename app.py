@@ -7,15 +7,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import get_config
 from src.api import main
-from src.database import engine, recreate_database
+from src.database import create_db_tables, engine
 from src.utils import tags_metadata
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if get_config().ENVIRONMENT == 'development':
-        await recreate_database(engine)
-
+        await create_db_tables(engine, drop=True)
+    else:
+        await create_db_tables(engine, drop=False)
     yield
 
 

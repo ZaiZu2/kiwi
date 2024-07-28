@@ -1,4 +1,27 @@
-### KIWI interview task
+## KIWI interview task
+
+### How to run
+
+1. Run a latest image of this app using `docker run -p 8000:8000 zaizu2/kiwi`
+2. Go to `localhost:8000/docs` and use OpenAPI docs to interact with restAPI
+3. Copy contents of `countries.json` (in the root directory) and use it as an input in `/countries`
+   endpoint. This will populate the DB with the country/name mapping used as a 'source of truth'.
+4. Use `/match_countries` to filter names based on the provided country ISO codes. Remember that
+`countries.json` have just a chunk of data used for demonstation, not all of the ISO Codes.
+
+Example of the `/match_countries` input body:
+```
+{
+  'iso': 'CAN',
+  'countries': [
+      'Canada',
+      'Kanada',
+      'Mexico',
+      'Brazil',
+      'Estados Unidos',
+  ]
+}
+```
 
 ### Frontend:
 
@@ -26,6 +49,7 @@ name references a proper ISO code. This is our source of truth.
 
 Application logs requests/errors to stdout and files using a rotating file strategy. Logs into 2
 files:
+
 - requests.log - only webserver request data
 - internal.log - full server logs - requests/manual logs/errors
 
