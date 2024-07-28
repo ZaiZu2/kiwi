@@ -13,16 +13,15 @@ from app import create_app
 from config import Config, get_config
 from src.database import create_db_tables, get_db_session
 
-test_engine = create_async_engine(get_config().DATABASE_URI)
+
+def get_test_config() -> Config:
+    return Config(DATABASE_URI='sqlite+aiosqlite:///tests/internal.db')
+
+
+test_engine = create_async_engine(get_test_config().DATABASE_URI)
 test_async_session = async_sessionmaker(
     bind=test_engine, autocommit=False, autoflush=True
 )
-
-
-def get_test_config() -> Config:
-    return Config(
-        SQLALCHEMY_DATABASE_URI='sqlite+aiosqlite:///tests/internal.db',
-    )
 
 
 async def get_test_db_session() -> AsyncGenerator[AsyncSession, None]:
@@ -61,7 +60,7 @@ async def test_app() -> FastAPI:
     test_app.dependency_overrides[get_config] = get_test_config
     test_app.dependency_overrides[get_db_session] = get_test_db_session
 
-    await create_db_tables(test_engine, drop=True)
+    await create_db_tables(test_engine, recreate=True)
     return test_app
 
 

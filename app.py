@@ -14,9 +14,9 @@ from src.utils import tags_metadata
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if get_config().ENVIRONMENT == 'development':
-        await create_db_tables(engine, drop=True)
+        await create_db_tables(engine, recreate=True)
     else:
-        await create_db_tables(engine, drop=False)
+        await create_db_tables(engine, recreate=False)
     yield
 
 

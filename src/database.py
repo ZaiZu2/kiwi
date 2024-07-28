@@ -36,8 +36,8 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
-async def create_db_tables(engine: AsyncEngine, drop: bool = False) -> None:
+async def create_db_tables(engine: AsyncEngine, recreate: bool = False) -> None:
     async with engine.begin() as conn:  # `engine.begin()` due to a synchronous DB commands
-        if drop:
+        if recreate:
             await conn.run_sync(db.Base.metadata.drop_all)
         await conn.run_sync(db.Base.metadata.create_all)
