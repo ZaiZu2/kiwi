@@ -11,7 +11,7 @@ class Config(BaseSettings):
         env_file=Path(__file__).parent.resolve() / '.env', env_file_encoding='utf-8'
     )
 
-    DATABASE_URI: str
+    DATABASE_URI: str = "sqlite+aiosqlite:///internal.db"
     ENVIRONMENT: Literal['development', 'production'] = 'production'
 
 

@@ -15,7 +15,6 @@ from src.utils import tags_metadata
 async def lifespan(app: FastAPI):
     if get_config().ENVIRONMENT == 'development':
         await recreate_database(engine)
-        # await populate_database()
 
     yield
 
@@ -39,4 +38,4 @@ def create_app() -> FastAPI:
 
 app = create_app()
 if __name__ == '__main__':
-    uvicorn.run(app)  # , log_config=LOGGING_CONFIG)
+    uvicorn.run(app)
