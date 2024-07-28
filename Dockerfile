@@ -17,7 +17,8 @@ RUN chown -R kiwi:kiwi .
 USER kiwi
 
 EXPOSE 8000
+# Listen on all interfaces, not just localhost
 CMD ["uvicorn", "app:app", \
-    # Listen on all interfaces, not just localhost
-    "--host", "0.0.0.0", \
-    "--log-config", "logging_config.json"]
+    "--host", "0.0.0.0" \
+    # "--log-config", "logging_config.json"
+    ]
