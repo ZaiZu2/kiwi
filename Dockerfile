@@ -4,6 +4,9 @@ SHELL ["/bin/bash", "-c"]
 RUN useradd kiwi
 WORKDIR /home/kiwi
 
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y sqlite3
+
 ENV VIRTUAL_ENV=/opt/venv
 RUN python -m venv ${VIRTUAL_ENV}
 ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
